@@ -1,0 +1,51 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.*;
+
+public class RotatingSegment extends JFrame {
+    private static final int WIDTH = 500;
+    private static final int HEIGHT = 500;
+    private static final int SEGMENT_LENGTH = 200;
+
+    private int angle = 0;
+    private Point2D rotationPoint = new Point2D.Double(WIDTH / 2, HEIGHT / 2);
+    private Timer timer;
+    private Color[] colors = {Color.RED, Color.GREEN, Color.BLUE}; // Culorile segmentului
+
+    public RotatingSegment() {
+        setTitle("Rotating Segment");
+        setSize(WIDTH, HEIGHT);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        timer = new Timer(100, e -> {
+            angle = (angle + 10) % 360; // Incrementăm unghiul cu 10 grade la fiecare pas
+            repaint(); // Reafisăm fereastra pentru a reflecta modificările
+        });
+        timer.start();
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+
+        Graphics2D g2d = (Graphics2D) g;
+
+        // Desenăm segmentul rotit
+        g2d.translate(rotationPoint.getX(), rotationPoint.getY());
+        g2d.rotate(Math.toRadians(angle));
+        g2d.setColor(colors[angle / 120]); // Schimbăm culoarea la fiecare 120 de grade (3 culori)
+        g2d.drawLine(0, 0, SEGMENT_LENGTH, 0);
+
+        // Resetăm transformările grafice
+        g2d.rotate(-Math.toRadians(angle));
+        g2d.translate(-rotationPoint.getX(), -rotationPoint.getY());
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            RotatingSegment rs = new RotatingSegment();
+            rs.setVisible(true);
+        });
+    }
+}
